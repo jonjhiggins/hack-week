@@ -20,7 +20,7 @@ describe('AuthService', () => {
     expect(service).toBeDefined();
   });
 
-  it.only('should get a valid response', async () => {
+  it('should get a valid response', async () => {
     const token = await service.getTokenForUser('sdfdas')
     expect(token).toBeDefined();
     expect(typeof token.id_token).toBe('string');
