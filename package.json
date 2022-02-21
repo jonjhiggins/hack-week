@@ -2,10 +2,15 @@
   "name": "hack-week",
   "version": "0.0.0",
   "license": "MIT",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "heroku-postbuild": "npx nx run backend:build",
+    "heroku-start": "node dist/apps/backend/main.js"
   },
   "private": true,
   "dependencies": {
