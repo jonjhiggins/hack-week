@@ -15,6 +15,9 @@ export class AuthService {
         map(res => res.data)
       )
     );
+  }
 
+  storeTokenInSession(session, token) {
+    session.authToken = token
   }
 }
