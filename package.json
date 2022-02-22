@@ -20,6 +20,7 @@
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "axios": "^0.26.0",
+    "express-session": "^1.17.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.0.0",
     "tslib": "^2.0.0"
@@ -36,6 +37,7 @@
     "@nrwl/nx-cloud": "latest",
     "@nrwl/tao": "13.8.2",
     "@nrwl/workspace": "13.8.2",
+    "@types/express-session": "^1.17.4",
     "@types/jest": "27.0.2",
     "@types/node": "16.11.7",
     "@typescript-eslint/eslint-plugin": "~5.10.0",
