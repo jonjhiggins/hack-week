@@ -5,11 +5,14 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) { }
 
+  @Post('session')
+  sessionOutput(@Session() session: AppSession) {
+    return `${session.userId} \n ${session.authToken}`
+  }
+
   @Post('token/:id')
   async getTokenForUser(@Param() params, @Session() session: AppSession) {
     const userId = params.id
-    const tokenResponse = await this.authService.getTokenForUser(userId)
-    this.authService.storeTokenInSession(session, tokenResponse.id_token)
-    return 'Token created and stored'
+    await this.authService.getTokenForUserAndStore(userId, session)
   }
 }

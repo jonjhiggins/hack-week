@@ -7,6 +7,11 @@ import { TokenResponse } from './auth.interface'
 export class AuthService {
   constructor(private httpService: HttpService) { }
 
+  async getTokenForUserAndStore(userId: string, session: AppSession) {
+    const tokenResponse = await this.getTokenForUser(userId)
+    this.storeTokenForUser(userId, tokenResponse.id_token, session)
+  }
+
   async getTokenForUser(userId: string): Promise<TokenResponse> {
     const url = `/api/v1/auth/token`
     const data = { user_id: userId }
@@ -17,7 +22,8 @@ export class AuthService {
     );
   }
 
-  storeTokenInSession(session, token) {
+  storeTokenForUser(userId: string, token: string, session: AppSession) {
     session.authToken = token
+    session.userId = userId
   }
 }

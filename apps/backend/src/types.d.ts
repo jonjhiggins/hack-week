@@ -1,5 +1,6 @@
 interface AppSession {
   authToken?: string
+  userId?: string
 }
 
 interface FictioneersApiValidationError {

@@ -8,10 +8,10 @@ import { CreateUserDto } from './user.dto';
 export class UserService {
   constructor(private httpService: HttpService) { }
 
-  async createUser(createUserDto: CreateUserDto): Promise<string> {
+  async createUser(createUserDto: CreateUserDto, authToken: string): Promise<string> {
     const url = `/api/v1/users`
     const config: AxiosRequestConfig = {
-      headers: { Authorization: 'Bearer ' }
+      headers: { Authorization: `Bearer ${authToken}` }
     }
     return lastValueFrom(
       this.httpService.post(url, createUserDto, config).pipe(
