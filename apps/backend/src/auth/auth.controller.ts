@@ -10,9 +10,9 @@ export class AuthController {
     return `${session.userId} \n ${session.authToken}`
   }
 
-  @Post('token/:id')
+  @Post('token/:userId')
   async getTokenForUser(@Param() params, @Session() session: AppSession) {
-    const userId = params.id
+    const userId = params.userId
     await this.authService.getTokenForUserAndStore(userId, session)
   }
 }

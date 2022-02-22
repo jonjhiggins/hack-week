@@ -9,10 +9,10 @@ export class UserController {
     private userService: UserService,
     private authService: AuthService) { }
 
-  @Post('/:id')
+  @Post('/:userId')
   async createUser(@Param() params, @Body() createUserDto: CreateUserDto, @Session() session: AppSession) {
     if (!session.authToken) {
-      const userId = params.id
+      const userId = params.userId
       await this.authService.getTokenForUserAndStore(userId, session)
     }
 
