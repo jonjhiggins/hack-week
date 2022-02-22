@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Global, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { SessionModule } from 'nestjs-session';
 import axios, { AxiosError } from 'axios';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
@@ -14,13 +13,6 @@ import { HttpModuleCustom } from './HttpModuleCustom';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env', '.env.local'] }),
-    SessionModule.forRoot({
-      session: {
-        secret: process.env.SESSION_SECRET,
-        cookie: { maxAge: 60000 },
-        resave: false
-      },
-    }),
     AuthModule,
     UserModule,
     HttpModuleCustom],

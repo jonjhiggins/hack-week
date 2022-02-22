@@ -1,8 +1,3 @@
-interface AppSession {
-  authToken?: string
-  userId?: string
-}
-
 interface FictioneersApiValidationError {
   loc: string[]
   msg: string

@@ -11,7 +11,7 @@ import { writeFileSync } from 'fs';
 
 // should do this as a global service
 // e.g. https://docs.nestjs.com/techniques/configuration
-const envVars = ['FICTIONEERS_API_BASE_URL', 'FICTIONEERS_API_KEY', 'SESSION_SECRET', 'SHOW_DOCS']
+const envVars = ['FICTIONEERS_API_BASE_URL', 'FICTIONEERS_API_KEY', 'SHOW_DOCS']
 
 envVars.forEach(e => {
   if (!process.env[e]) {

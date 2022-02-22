@@ -21,8 +21,6 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.2.0",
     "axios": "^0.26.0",
-    "express-session": "^1.17.2",
-    "nestjs-session": "^2.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.0.0",
     "swagger-ui-express": "^4.3.0",

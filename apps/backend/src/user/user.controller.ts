@@ -1,30 +1,20 @@
-import { Body, Controller, Get, Param, Post, Session } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import type { CreateUserDto } from './user.dto';
 import { UserService } from './user.service';
-import { AuthService } from '../auth/auth.service';
 
 @Controller('user')
 export class UserController {
   constructor(
-    private userService: UserService,
-    private authService: AuthService) { }
+    private userService: UserService) { }
 
-  @Get('/me')
-  async me(@Session() session: AppSession) {
-    if (!session.authToken) {
-      throw new Error('Missing auth token')
-    }
-    const me = await this.userService.getCurrentUser(session.authToken)
+  @Get('/me/:authToken')
+  async me(@Param() params) {
+    const me = await this.userService.getCurrentUser(params.authToken)
     return me.data
   }
 
-  @Post('/:userId')
-  async createUser(@Param() params, @Body() createUserDto: CreateUserDto, @Session() session: AppSession) {
-    if (!session.authToken) {
-      const userId = params.userId
-      await this.authService.getTokenForUserAndStore(userId, session)
-    }
-
-    return this.userService.createUser(createUserDto, session.authToken)
+  @Post('/:authToken')
+  async createUser(@Param() params, @Body() createUserDto: CreateUserDto) {
+    return this.userService.createUser(createUserDto, params.authToken)
   }
 }
