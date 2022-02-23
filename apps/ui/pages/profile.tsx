@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
-import { axiosInstance } from '../client/axiosInstance';
+import { axiosInstance } from '../services/axiosInstance';
 import useSWR from 'swr'
+import axios from 'axios';
 
 interface MeResponse {
   data: {
@@ -13,15 +14,44 @@ interface MeResponse {
   meta: null | unknown
 }
 
-const fetcher = (url) => axiosInstance.get<MeResponse>(url)
+const meFetcher = async (url) => {
+  const meResponse = axiosInstance.get<MeResponse>(url)
 
+  try {
+    await meResponse
+  } catch (e: unknown) {
+    // Create user if they don't exist
+    if (axios.isAxiosError(e)) {
+      if (e.response.status === 403) {
+        await createUser()
+        return axiosInstance.get<MeResponse>(url)
+      }
+      return
+    }
+    throw new Error()
+  }
+  return meResponse
+}
 
+function loadData() {
+  return useSWR(
+    "/api/v1/users/me",
+    meFetcher
+  );
+}
+
+async function createUser() {
+  const user = localStorage.getItem('user_uid')
+  const uid = JSON.parse(user).uid
+  await axiosInstance.post('/api/v1/users',
+    {
+      user_id: uid, published_timeline_id: "BQyAKcJvnCnEL0Vomv50",
+      timezone: "Europe/London",
+    })
+}
 
 export function Index() {
-  const { data, error } = useSWR(
-    "/api/v1/users/me",
-    fetcher
-  );
+  const { data, error } = loadData()
 
   if (error) return "An error has occurred.";
   if (!data) return "Loading...";
@@ -31,6 +61,7 @@ export function Index() {
   return (
     <StyledPage>
       <ul>
+        <li>ID: {profile.id}</li>
         <li>Display name: {profile.display_name}</li>
         <li>Email: {profile.email}</li>
         <li>Narrative state: {JSON.stringify(profile.narrative_state)}</li>
