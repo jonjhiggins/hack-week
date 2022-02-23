@@ -14,7 +14,12 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>DCI Hood</title>
       </Head>
-      <NavBar navLinks={[{ name: 'Home', href: '/' }, { name: 'Profile', href: '/profile' }, { name: 'User Story State', href: '/user-story-state' }]} />
+      <NavBar navLinks={[
+        { name: 'Home', href: '/' },
+        { name: 'Profile', href: '/profile' },
+        { name: 'User Story State', href: '/user-story-state' },
+        { name: 'User Timeline Hooks', href: '/user-timeline-hooks' }
+      ]} />
 
       <main className="app">
         <Component {...pageProps} profile={profile} />
