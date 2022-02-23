@@ -33,6 +33,7 @@
     "regenerator-runtime": "0.13.7",
     "rxjs": "^7.0.0",
     "swagger-ui-express": "^4.3.0",
+    "swr": "^1.2.2",
     "tslib": "^2.0.0"
   },
   "devDependencies": {

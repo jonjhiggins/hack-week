@@ -6,7 +6,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Welcome to ui!</title>
+        <title>DCI Hood</title>
       </Head>
       <main className="app">
         <Component {...pageProps} />
