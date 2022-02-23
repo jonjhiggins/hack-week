@@ -1,63 +1,6 @@
 import styled from '@emotion/styled';
-import { axiosInstance } from '../services/axiosInstance';
-import useSWR from 'swr'
-import axios from 'axios';
 
-interface MeResponse {
-  data: {
-    id: string,
-    email: string | null,
-    display_name: string | null,
-    narrative_state: unknown
-  },
-  error: null | unknown,
-  meta: null | unknown
-}
-
-const meFetcher = async (url) => {
-  const meResponse = axiosInstance.get<MeResponse>(url)
-
-  try {
-    await meResponse
-  } catch (e: unknown) {
-    // Create user if they don't exist
-    if (axios.isAxiosError(e)) {
-      if (e.response.status === 403) {
-        await createUser()
-        return axiosInstance.get<MeResponse>(url)
-      }
-      return
-    }
-    throw new Error()
-  }
-  return meResponse
-}
-
-function loadData() {
-  return useSWR(
-    "/api/v1/users/me",
-    meFetcher
-  );
-}
-
-async function createUser() {
-  const user = localStorage.getItem('user_uid')
-  const uid = JSON.parse(user).uid
-  await axiosInstance.post('/api/v1/users',
-    {
-      user_id: uid, published_timeline_id: process.env.NEXT_PUBLIC_FICTIONEERS_TIMELINE_ID,
-      timezone: "Europe/London",
-    })
-}
-
-export function Index() {
-  const { data, error } = loadData()
-
-  if (error) return "An error has occurred.";
-  if (!data) return "Loading...";
-
-  const { data: { data: profile } } = data
-
+export function Profile({ profile }) {
   return (
     <StyledPage>
       <ul>
@@ -77,5 +20,5 @@ const StyledPage = styled.div`
   }
 `;
 
-export default Index;
+export default Profile;
 

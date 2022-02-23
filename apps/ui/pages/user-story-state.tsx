@@ -3,34 +3,6 @@ import { axiosInstance } from '../services/axiosInstance';
 import useSWR from 'swr';
 import { useEffect, useState } from 'react';
 
-interface UserStoryState {
-  current_event_id: string | null
-  current_step: number | null
-  current_beat: {
-    id: string | null
-    name: string | null
-  }
-  new_beat_available: {
-    id: string | null
-    name: string | null
-  }
-  waiting_for_condition_id: string | null
-  end_of_timeline_reached: boolean
-  datetime_guards_disabled: boolean
-  pause_at_beats: boolean
-  active_timeline_id: string
-}
-
-interface UserStoryStateResponse {
-  data: UserStoryState,
-  error: null | unknown,
-  meta: null | unknown
-}
-
-interface UserStoryStateProgressDto {
-  max_steps?: number,
-  pause_at_beats?: true
-}
 
 const fetcher = (url) => axiosInstance.get<UserStoryStateResponse>(url)
 
@@ -57,14 +29,16 @@ export function UserStoryState() {
   if (error) return "An error has occurred.";
   if (!data) return "Loading...";
 
-
   return (
     <StyledPage>
       {storyState ?
+        <div>
         <ul>
           {Object.keys(storyState).map(k => <li key={k}>{k}: {storyState[k] ? JSON.stringify(storyState[k]) : 'null'}</li>)}
-        </ul> : null}
-      <button onClick={advance}>Advance</button>
+          </ul>
+          <button onClick={advance}>Advance</button>
+        </div> : null}
+
     </StyledPage>
   );
 }
