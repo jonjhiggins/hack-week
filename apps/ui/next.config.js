@@ -10,14 +10,6 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_FICTIONEERS_AUDIENCE_API_HOST}/api/:path*` // Proxy to Backend
-      }
-    ]
-  }
 };
 
 module.exports = withNx(nextConfig);
