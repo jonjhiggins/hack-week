@@ -45,7 +45,7 @@ async function createUser() {
   const uid = JSON.parse(user).uid
   await axiosInstance.post('/api/v1/users',
     {
-      user_id: uid, published_timeline_id: "BQyAKcJvnCnEL0Vomv50",
+      user_id: uid, published_timeline_id: process.env.NEXT_PUBLIC_FICTIONEERS_TIMELINE_ID,
       timezone: "Europe/London",
     })
 }
