@@ -31,16 +31,16 @@ interface UserStoryStateProgressDto {
   pause_at_beats?: true
 }
 
-type MeResponse = FictioneersApiResponse<Me>
+type UserProfileResponse = FictioneersApiResponse<UserProfile>
 
-interface Me {
+interface UserProfile {
   id: string,
   email: string | null,
   display_name: string | null,
   narrative_state: unknown
 }
 
-type UserTimeLineHooksResponse = FictioneersApiResponse<UserTimeLineHooks>
+type UserTimeLineHooksResponse = FictioneersApiResponse<UserTimeLineHooks[]>
 
 interface UserTimeLineHooks {
   timeline_event_id: string
@@ -48,7 +48,7 @@ interface UserTimeLineHooks {
   event_type: NarrativeEventType
   hook: string
   delivered_at: string | null
-  content_integrations: [HookContentIntegrationSerializer]
+  content_integrations: HookContentIntegrationSerializer[]
   title: string
   description: string | null
 }

@@ -6,7 +6,8 @@
     "node": "14.x"
   },
   "scripts": {
-    "start": "npx nx run-many --parallel --all --target serve",
+    "start": "npx nx run ui:serve",
+    "start:all": "npx nx run-many --parallel --all --target serve",
     "build": "nx build",
     "test": "nx test",
     "heroku-postbuild": "npx nx run backend:build",
@@ -25,6 +26,7 @@
     "@nestjs/swagger": "^5.2.0",
     "@nrwl/next": "13.8.3",
     "axios": "^0.26.0",
+    "contentful": "^9.1.10",
     "core-js": "^3.6.5",
     "next": "12.1.0",
     "qs": "^6.10.3",

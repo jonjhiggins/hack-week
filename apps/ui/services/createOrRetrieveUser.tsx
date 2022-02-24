@@ -12,29 +12,29 @@ async function createUser() {
     });
 }
 
-const meFetcher = async (url) => {
-  const meResponse = axiosInstance.get<MeResponse>(url)
+const userProfileFetcher = async (url) => {
+  const userProfileResponse = axiosInstance.get<UserProfileResponse>(url)
 
   try {
-    await meResponse
+    await userProfileResponse
   } catch (e: unknown) {
     // Create user if they don't exist
     if (axios.isAxiosError(e)) {
       if (e.response.status === 403) {
         await createUser()
-        return axiosInstance.get<MeResponse>(url)
+        return axiosInstance.get<UserProfileResponse>(url)
       }
       return
     }
     throw new Error()
   }
-  return meResponse
+  return userProfileResponse
 }
 
 function createOrRetrieveUser() {
   return useSWR(
     "/api/v1/users/me",
-    meFetcher
+    userProfileFetcher
   );
 }
 

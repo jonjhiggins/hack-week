@@ -5,7 +5,7 @@ import useSWR from 'swr';
 
 const fetcher = (url) => axiosInstance.get<UserTimeLineHooksResponse>(url)
 
-export function UserStoryState() {
+export function UserTimelineHooks() {
   const { data, error } = useSWR(
     "/api/v1/user-timeline-hooks",
     fetcher
@@ -19,7 +19,7 @@ export function UserStoryState() {
       {timelineState ?
         <div>
           <ul>
-            {Object.keys(timelineState).map(k => <li key={k}>{timelineState[k] ? JSON.stringify(timelineState[k]) : 'null'}</li>)}
+            {timelineState.map((item, i) => <li key={i}>{JSON.stringify(item)}</li>)}
           </ul>
         </div> : null}
     </StyledPage>
@@ -33,5 +33,5 @@ const StyledPage = styled.div`
   }
 `;
 
-export default UserStoryState;
+export default UserTimelineHooks;
 
