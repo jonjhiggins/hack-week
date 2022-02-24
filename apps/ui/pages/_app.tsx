@@ -90,7 +90,10 @@ function CustomApp({ Component, pageProps }: AppProps) {
       return
     }
     if (userTimelineHooksResponse && userTimelineHooksResponse.data.data) {
-      setUserTimelineHooks(userTimelineHooksResponse.data.data)
+      const userTimelineHooksResponseData = userTimelineHooksResponse.data.data
+      setUserTimelineHooks(userTimelineHooksResponseData)
+      // set latest event hook to be current one
+      setCurrentEventHook(userTimelineHooksResponseData[userTimelineHooksResponseData.length - 1])
       setIsError(null)
       setIsLoading(false)
     }

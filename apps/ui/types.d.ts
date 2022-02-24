@@ -55,14 +55,14 @@ interface UserStoryState {
   active_timeline_id: string
 }
 
-type UserStoryStateResponse = FictioneersApiResponse<UserStoryState, MetaSerializer>
+type UserStoryStateResponse = FictioneersApiResponse<UserStoryState, MetaSerializer | null>
 
 interface UserStoryStateProgressDto {
   max_steps?: number,
   pause_at_beats?: true
 }
 
-type UserProfileResponse = FictioneersApiResponse<UserProfile, unknown>
+type UserProfileResponse = FictioneersApiResponse<UserProfile, MetaSerializer | null>
 
 interface UserProfile {
   id: string,
@@ -71,7 +71,7 @@ interface UserProfile {
   narrative_state: unknown
 }
 
-type UserTimeLineHooksResponse = FictioneersApiResponse<UserTimeLineHooks[], unknown>
+type UserTimeLineHooksResponse = FictioneersApiResponse<UserTimeLineHooks[], MetaSerializer | null>
 
 interface UserTimeLineHooks {
   timeline_event_id: string
