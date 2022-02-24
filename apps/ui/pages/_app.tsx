@@ -14,10 +14,10 @@ async function advanceUser() {
     max_steps: 1,
     // pause_at_beats: true
   }
-  const userStoryStateResponse = await axiosInstance.post<UserStoryStateResponse>(url, advanceData)
-  const { data: { data: userStoryData } } = userStoryStateResponse
-  return userStoryData
+  return axiosInstance.post<UserStoryStateResponse>(url, advanceData)
 }
+
+
 
 function CustomApp({ Component, pageProps }: AppProps) {
   const [userTimelineHooks, setUserTimelineHooks] = useState<UserTimeLineHooks[] | null>(null)
@@ -25,14 +25,33 @@ function CustomApp({ Component, pageProps }: AppProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isError, setIsError] = useState<string | null>(null)
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [currentEventHook, setCurrentEventHook] = useState<UserTimelineHookSerializer | null>(null)
 
   const advance = async () => {
     try {
-      const userStoryData = await advanceUser();
-      setUserStoryState(userStoryData)
+      const userStoryStateResponse = await advanceUser();
+      if (userStoryStateResponse.data.meta.upserted_event_hooks.length) {
+        setCurrentEventHook(userStoryStateResponse.data.meta.upserted_event_hooks[0])
+      }
+
+      setUserStoryState(userStoryStateResponse.data.data)
+
       setIsError(null)
     } catch (e) {
       setIsError(`Could not advance user ${e.message}`)
+    }
+  }
+
+  const restart = async () => {
+    try {
+      axiosInstance.delete('api/v1/users/me')
+      setIsError(null)
+      setIsLoading(false)
+      setUserProfile(null)
+      setUserStoryState(null)
+      setUserTimelineHooks(null)
+    } catch (e) {
+      setIsError(`Could not delete user ${e.message}`)
     }
   }
 
@@ -50,7 +69,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (userProfileError) {
-      setIsError(userProfileError)
+      setIsError(`Could not load user profile ${userProfileError}`)
       setIsLoading(false)
       return
     }
@@ -66,7 +85,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (userTimelineHooksError) {
-      setIsError(userTimelineHooksError)
+      setIsError(`Could not load user timeline hooks ${userTimelineHooksError}`)
       setIsLoading(false)
       return
     }
@@ -79,7 +98,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (userStoryStateError) {
-      setIsError(userStoryStateError)
+      setIsError(`Could not load user story state ${userStoryStateError}`)
       setIsLoading(false)
       return
     }
@@ -100,12 +119,15 @@ function CustomApp({ Component, pageProps }: AppProps) {
         { name: 'Profile', href: '/profile' },
         { name: 'User Story State', href: '/user-story-state' },
         { name: 'User Timeline Hooks', href: '/user-timeline-hooks' }
+      ]} buttons={[
+        <button onClick={advance}>Advance</button>,
+        <button onClick={restart}>Restart</button>
       ]} />
-      <button onClick={advance}>Advance</button>
+
 
       <main className="app">
         {isError ? <div>Error: {isError}</div> : null}
-        {!isLoading ? <Component {...pageProps} profile={userProfile} userStoryState={userStoryState} userTimelineHooks={userTimelineHooks} /> : <div>Loading...</div>}
+        {!isLoading ? <Component {...pageProps} profile={userProfile} currentEventHook={currentEventHook} userStoryState={userStoryState} userTimelineHooks={userTimelineHooks} /> : <div>Loading...</div>}
 
       </main>
     </>

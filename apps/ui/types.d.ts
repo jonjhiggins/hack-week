@@ -1,10 +1,41 @@
 
 
-interface FictioneersApiResponse<T> {
+interface FictioneersApiResponse<T, TT> {
   data: T,
   error: null | unknown,
-  meta: null | unknown
+  meta: TT
 }
+
+interface MetaSerializer {
+  upserted_event_hooks: UserTimelineHookSerializer[] | null
+  upserted_interactables: UserInteractableSerializer[] | null
+  service_status: unknown
+}
+
+interface UserTimelineHookSerializer {
+  timeline_event_id: string
+  narrative_event_id: string
+  event_type: NarrativeEventType
+  hook: string
+  delivered_at: string | null
+  content_integrations: HookContentIntegrationSerializer[]
+  title: string
+  description: string | null
+}
+
+interface UserInteractableSerializer {
+  id: string
+  type: InteractableType
+  state: InteractableState
+  timeline_event_id: string
+  narrative_event_id: string
+  available_states: UserInteractableCommand[]
+  content: HookContentIntegrationSerializer[] | null
+  created_at: string
+  last_modified_at: string
+}
+
+interface UserInteractableCommand { }
 
 interface UserStoryState {
   current_event_id: string | null
@@ -24,14 +55,14 @@ interface UserStoryState {
   active_timeline_id: string
 }
 
-type UserStoryStateResponse = FictioneersApiResponse<UserStoryState>
+type UserStoryStateResponse = FictioneersApiResponse<UserStoryState, MetaSerializer>
 
 interface UserStoryStateProgressDto {
   max_steps?: number,
   pause_at_beats?: true
 }
 
-type UserProfileResponse = FictioneersApiResponse<UserProfile>
+type UserProfileResponse = FictioneersApiResponse<UserProfile, unknown>
 
 interface UserProfile {
   id: string,
@@ -40,7 +71,7 @@ interface UserProfile {
   narrative_state: unknown
 }
 
-type UserTimeLineHooksResponse = FictioneersApiResponse<UserTimeLineHooks[]>
+type UserTimeLineHooksResponse = FictioneersApiResponse<UserTimeLineHooks[], unknown>
 
 interface UserTimeLineHooks {
   timeline_event_id: string
@@ -63,4 +94,22 @@ enum NarrativeEventType {
   SIMPLE = 'SIMPLE',
   ACTIVITY = 'ACTIVITY',
   CONSUMABLE = 'CONSUMABLE'
+}
+
+
+enum InteractableType {
+  ACTIVITY = 'ACTIVITY',
+  CONSUMABLE = 'CONSUMABLE'
+}
+
+enum InteractableState {
+  INITIAL = 'INITIAL',
+  AVAILABLE = 'AVAILABLE',
+  STARTED = 'STARTED',
+  SKIPPED = 'SKIPPED',
+  REMOVED = 'REMOVED',
+  PURGED = 'PURGED',
+  UNAVAILABLE = 'UNAVAILABLE',
+  COMPLETED = 'COMPLETED',
+  CONSUMED = 'CONSUMED',
 }

@@ -1,7 +1,18 @@
 import { css } from '@emotion/react';
 import Link from 'next/link';
+import { ReactChild } from 'react';
 
-export function NavBar({ navLinks }) {
+interface NavLink {
+  href: string
+  name: string
+}
+
+interface NavBarProps {
+  navLinks: NavLink[]
+  buttons: ReactChild[]
+}
+
+export function NavBar({ navLinks, buttons }: NavBarProps) {
   return <nav>
     <ul css={css`
           margin: 0;
@@ -13,7 +24,7 @@ export function NavBar({ navLinks }) {
           margin: 0 0.5em 0 0;
           padding: 0;
         `}><Link href={n.href}>{n.name}</Link></li>)}
-
+      {buttons.map((b, i) => <li key={i}>{b}</li>)}
     </ul>
   </nav>;
 }

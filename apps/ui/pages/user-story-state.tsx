@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
-import { axiosInstance } from '../services/axiosInstance';
 
 export function UserStoryState({ userStoryState }) {
-  console.log(userStoryState)
   return (
     <StyledPage>
       {userStoryState ?

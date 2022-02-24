@@ -3,43 +3,40 @@ import { Entry } from 'contentful';
 import { useEffect, useState } from 'react';
 import { contentfulClient } from '../services/contentful';
 
+interface IndexProps {
+  currentEventHook: UserTimelineHookSerializer | null
+}
 
-export function Index({ userTimelineHooks }) {
-  const [contentfulContent, setContentfulContent] = useState<Entry<Record<string, unknown>>[]>([])
+export function Index({ currentEventHook }: IndexProps) {
+  const [contentfulContent, setContentfulContent] = useState<Entry<Record<string, unknown>> | null>(null)
 
   useEffect(() => {
-    const fetchData = async (contentfulContents: HookContentIntegrationSerializer[]) => {
-      for (const content of contentfulContents) {
+    const fetchData = async ({ content_id }: HookContentIntegrationSerializer) => {
         contentfulClient
-          .getEntry(content.content_id)
+          .getEntry(content_id)
           .then(entry => {
-            setContentfulContent(contentfulContentItem =>
-              [...contentfulContentItem.filter(e => e.sys.id !== entry.sys.id), entry as Entry<Record<string, unknown>>]
-            )
+            setContentfulContent(entry as Entry<Record<string, unknown>>)
           })
           .catch(err => console.log(err));
-      }
-
     }
 
-    if (userTimelineHooks) {
-      const contentfulItems = userTimelineHooks.map(hook => hook.content_integrations.filter(ci => ci.provider_id === 'contentful')[0])
-      fetchData(contentfulItems)
+    if (currentEventHook && currentEventHook.content_integrations.some((ci) => ci.provider_id === 'contentful')) {
+      const contentfulItem = currentEventHook.content_integrations.find((ci) => ci.provider_id === 'contentful')
+      fetchData(contentfulItem)
     }
-  }, [userTimelineHooks])
-
+  }, [currentEventHook])
 
   return (
     <StyledPage>
 
-      {contentfulContent ? contentfulContent.map(((contentfulItem, index) =>
-        <div key={index}>
-          {contentfulItem.sys.contentType.sys.id === 'youtubeVideo' ?
+      {contentfulContent ?
+        <div >
+          {contentfulContent.sys.contentType.sys.id === 'youtubeVideo' ?
             <iframe width="560" height="315" src={`https://www.youtube.com/embed/${contentfulItem.fields.ytLlink}`} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> : null}
-          {contentfulItem.sys.contentType.sys.id !== 'youtubeVideo' ?
-            contentfulItem.fields.title : null}
+          {contentfulContent.sys.contentType.sys.id !== 'youtubeVideo' ?
+            contentfulContent.fields.title : null}
         </div>
-      )) : null}
+        : null}
     </StyledPage>
   );
 }
