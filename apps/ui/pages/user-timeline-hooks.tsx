@@ -14,14 +14,15 @@ export function UserTimelineHooks() {
   if (error) return "An error has occurred.";
   if (!data) return "Loading...";
   const { data: { data: timelineState } } = data
+
   return (
     <StyledPage>
-      {timelineState ?
+      {timelineState && timelineState.length ?
         <div>
           <ul>
             {timelineState.map((item, i) => <li key={i}>{JSON.stringify(item)}</li>)}
           </ul>
-        </div> : null}
+        </div> : <div>User has no timeline state</div>}
     </StyledPage>
   );
 }

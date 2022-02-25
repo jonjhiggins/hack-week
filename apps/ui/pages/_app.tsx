@@ -4,20 +4,10 @@ import { createOrRetrieveUser } from '../services/createOrRetrieveUser';
 import { NavBar } from '../components/NavBar';
 import './styles.css';
 import { useEffect, useState } from 'react';
-import useSWR from 'swr';
 import { axiosInstance } from '../services/axiosInstance';
-
-
-async function advanceUser() {
-  const url = '/api/v1/user-story-state/progress-events'
-  const advanceData: UserStoryStateProgressDto = {
-    max_steps: 1,
-    // pause_at_beats: true
-  }
-  return axiosInstance.post<UserStoryStateResponse>(url, advanceData)
-}
-
-
+import { useUserTimelineHooks } from '../data/useUserTimelineHooks';
+import { useUserStoryState } from '../data/useUserStoryState';
+import { advanceUser } from '../data/advanceUser';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   const [userTimelineHooks, setUserTimelineHooks] = useState<UserTimeLineHooks[] | null>(null)
@@ -32,8 +22,8 @@ function CustomApp({ Component, pageProps }: AppProps) {
       const userStoryStateResponse = await advanceUser();
       if (userStoryStateResponse.data.meta.upserted_event_hooks.length) {
         setCurrentEventHook(userStoryStateResponse.data.meta.upserted_event_hooks[0])
+        setUserTimelineHooks(userStoryStateResponse.data.meta.upserted_event_hooks)
       }
-
       setUserStoryState(userStoryStateResponse.data.data)
 
       setIsError(null)
@@ -56,17 +46,20 @@ function CustomApp({ Component, pageProps }: AppProps) {
     }
   }
 
+  // Get user
   const { data: userProfileResponse, error: userProfileError } = createOrRetrieveUser()
 
-  const { data: userTimelineHooksResponse, error: userTimelineHooksError } = useSWR(
-    "/api/v1/user-timeline-hooks",
-    (url) => axiosInstance.get<UserTimeLineHooksResponse>(url)
-  );
+  // Get timeline hooks
+  const {
+    error: userTimelineHooksError,
+    response: userTimelineHooksResponse,
+  } = useUserTimelineHooks(!!userProfile)
 
-  const { data: userStoryStateResponse, error: userStoryStateError } = useSWR(
-    "/api/v1/user-story-state",
-    (url) => axiosInstance.get<UserStoryStateResponse>(url)
-  );
+  // Get user story state
+  const {
+    error: userStoryStateError,
+    response: userStoryStateResponse,
+  } = useUserStoryState(!!userProfile)
 
   useEffect(() => {
     if (userProfileError) {
@@ -79,7 +72,6 @@ function CustomApp({ Component, pageProps }: AppProps) {
       setIsError(null)
       setIsLoading(false)
     }
-
   }, [
     userProfileResponse, userProfileError
   ])
@@ -90,7 +82,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       setIsLoading(false)
       return
     }
-    if (userTimelineHooksResponse && userTimelineHooksResponse.data.data) {
+    if (userTimelineHooksResponse && userTimelineHooksResponse.data.data && userTimelineHooksResponse.data.data.length) {
       const userTimelineHooksResponseData = userTimelineHooksResponse.data.data
       setUserTimelineHooks(userTimelineHooksResponseData)
       // set latest event hook to be current one
