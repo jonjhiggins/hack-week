@@ -10,6 +10,7 @@ import { useUserStoryState } from '../data/useUserStoryState';
 import { advanceUser } from '../data/advanceUser';
 import { css } from '@emotion/react';
 import { useUserInteractables } from '../data/useUserInteractables';
+import { useRouter } from 'next/router';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   const [userTimelineHooks, setUserTimelineHooks] = useState<UserTimelineHookSerializer[] | null>(null)
@@ -133,12 +134,15 @@ function CustomApp({ Component, pageProps }: AppProps) {
     }
   }, [userStoryStateResponse, userStoryStateError])
 
+  const router = useRouter()
+  const { debug } = router.query
+
   return (
     <>
       <Head>
         <title>DCI Hood</title>
       </Head>
-      <NavBar navLinks={[
+      {debug ? <NavBar navLinks={[
         { name: 'Home', href: '/' },
         { name: 'Profile', href: '/profile' },
         { name: 'User Story State', href: '/user-story-state' },
@@ -147,7 +151,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       ]} buttons={[
         <button onClick={advance}>Advance</button>,
         <button onClick={restart}>Restart</button>
-      ]} />
+        ]} /> : null}
 
       <main className="app" css={css(`height: 100vh`)}>
         {isError ? <div>Error: {isError}</div> : null}
