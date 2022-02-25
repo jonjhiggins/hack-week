@@ -44,12 +44,13 @@ function CustomApp({ Component, pageProps }: AppProps) {
 
   const restart = async () => {
     try {
-      axiosInstance.delete('api/v1/users/me')
+      await axiosInstance.delete('api/v1/users/me')
       setIsError(null)
       setIsLoading(false)
       setUserProfile(null)
       setUserStoryState(null)
       setUserTimelineHooks(null)
+      window.location.reload()
     } catch (e) {
       setIsError(`Could not delete user ${e.message}`)
     }
