@@ -8,20 +8,24 @@ import { axiosInstance } from '../services/axiosInstance';
 import { useUserTimelineHooks } from '../data/useUserTimelineHooks';
 import { useUserStoryState } from '../data/useUserStoryState';
 import { advanceUser } from '../data/advanceUser';
+import { css } from '@emotion/react';
+import { useUserInteractables } from '../data/useUserInteractables';
 
 function CustomApp({ Component, pageProps }: AppProps) {
-  const [userTimelineHooks, setUserTimelineHooks] = useState<UserTimeLineHooks[] | null>(null)
+  const [userTimelineHooks, setUserTimelineHooks] = useState<UserTimelineHookSerializer[] | null>(null)
+  const [userInteractables, setUserInteractables] = useState<UserInteractableSerializer[] | null>(null)
   const [userStoryState, setUserStoryState] = useState<UserStoryState | null>(null)
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const [currentTimelineHook, setCurrentTimelineHook] = useState<UserTimelineHookSerializer | null>(null)
+  const [currentUserInteractable, setCurrentUserInteractable] = useState<UserInteractableSerializer | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isError, setIsError] = useState<string | null>(null)
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
-  const [currentEventHook, setCurrentEventHook] = useState<UserTimelineHookSerializer | null>(null)
 
   const advance = async () => {
     try {
       const userStoryStateResponse = await advanceUser();
       if (userStoryStateResponse.data.meta.upserted_event_hooks.length) {
-        setCurrentEventHook(userStoryStateResponse.data.meta.upserted_event_hooks[0])
+        setCurrentTimelineHook(userStoryStateResponse.data.meta.upserted_event_hooks[0])
         setUserTimelineHooks(userStoryStateResponse.data.meta.upserted_event_hooks)
       }
       setUserStoryState(userStoryStateResponse.data.data)
@@ -61,6 +65,30 @@ function CustomApp({ Component, pageProps }: AppProps) {
     response: userStoryStateResponse,
   } = useUserStoryState(!!userProfile)
 
+  // Get user interactables
+  const {
+    error: userInteractablesError,
+    response: userInteractablesResponse,
+  } = useUserInteractables(!!userProfile)
+
+  useEffect(() => {
+    if (userInteractablesError) {
+      setIsError(`Could not load user story state ${userStoryStateError}`)
+      setIsLoading(false)
+      return
+    }
+    if (userInteractablesResponse && userInteractablesResponse.data.data) {
+      const userInteractablesResponseData = userInteractablesResponse.data.data
+      setUserInteractables(userInteractablesResponseData)
+      // set latest event hook to be current one
+      setCurrentUserInteractable(userInteractablesResponseData[userInteractablesResponseData.length - 1])
+      setIsError(null)
+      setIsLoading(false)
+    }
+  }, [
+    userInteractablesResponse
+  ])
+
   useEffect(() => {
     if (userProfileError) {
       setIsError(`Could not load user profile ${userProfileError}`)
@@ -86,7 +114,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       const userTimelineHooksResponseData = userTimelineHooksResponse.data.data
       setUserTimelineHooks(userTimelineHooksResponseData)
       // set latest event hook to be current one
-      setCurrentEventHook(userTimelineHooksResponseData[userTimelineHooksResponseData.length - 1])
+      setCurrentTimelineHook(userTimelineHooksResponseData[userTimelineHooksResponseData.length - 1])
       setIsError(null)
       setIsLoading(false)
     }
@@ -114,16 +142,24 @@ function CustomApp({ Component, pageProps }: AppProps) {
         { name: 'Home', href: '/' },
         { name: 'Profile', href: '/profile' },
         { name: 'User Story State', href: '/user-story-state' },
-        { name: 'User Timeline Hooks', href: '/user-timeline-hooks' }
+        { name: 'User Timeline Hooks', href: '/user-timeline-hooks' },
+        { name: 'User Interactables', href: '/user-interactables' }
       ]} buttons={[
         <button onClick={advance}>Advance</button>,
         <button onClick={restart}>Restart</button>
       ]} />
 
-
-      <main className="app">
+      <main className="app" css={css(`height: 100vh`)}>
         {isError ? <div>Error: {isError}</div> : null}
-        {!isLoading ? <Component {...pageProps} profile={userProfile} currentEventHook={currentEventHook} userStoryState={userStoryState} userTimelineHooks={userTimelineHooks} /> : <div>Loading...</div>}
+        {!isLoading ? <Component
+          {...pageProps}
+          profile={userProfile}
+          userStoryState={userStoryState}
+          userTimelineHooks={userTimelineHooks}
+          currentTimelineHook={currentTimelineHook}
+          userInteractables={userInteractables}
+          currentUserInteractable={setCurrentUserInteractable}
+        /> : <div>Loading...</div>}
 
       </main>
     </>

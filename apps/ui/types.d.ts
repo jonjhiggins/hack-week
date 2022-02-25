@@ -1,4 +1,13 @@
+import { NextPageContext } from "next"
 
+interface PageProps extends NextPageContext {
+  profile: UserProfile
+  userStoryState: UserStoryState
+  userTimelineHooks: UserTimelineHookSerializer[]
+  currentTimelineHook: UserTimelineHookSerializer
+  userInteractables: UserInteractableSerializer[]
+  currentUserInteractable: UserInteractableSerializer
+}
 
 interface FictioneersApiResponse<T, TT> {
   data: T,
@@ -35,7 +44,13 @@ interface UserInteractableSerializer {
   last_modified_at: string
 }
 
-interface UserInteractableCommand { }
+enum UserInteractableCommand {
+  STARTED = 'STARTED',
+  SKIPPED = 'SKIPPED',
+  CANCELLED = 'CANCELLED',
+  COMPLETED = 'COMPLETED',
+  CONSUMED = 'CONSUMED',
+}
 
 interface UserStoryState {
   current_event_id: string | null
@@ -71,24 +86,19 @@ interface UserProfile {
   narrative_state: unknown
 }
 
-type UserTimeLineHooksResponse = FictioneersApiResponse<UserTimeLineHooks[], MetaSerializer | null>
+type UserTimeLineHooksResponse = FictioneersApiResponse<UserTimelineHookSerializer[], MetaSerializer | null>
 
-interface UserTimeLineHooks {
-  timeline_event_id: string
-  narrative_event_id: string
-  event_type: NarrativeEventType
-  hook: string
-  delivered_at: string | null
-  content_integrations: HookContentIntegrationSerializer[]
-  title: string
-  description: string | null
-}
+
 
 interface HookContentIntegrationSerializer {
   content_id: string
   content_type: string
   provider_id: string
 }
+
+type UserInteractablesResponse = FictioneersApiResponse<UserInteractableSerializer[] | null, MetaSerializer | null>
+
+
 
 enum NarrativeEventType {
   SIMPLE = 'SIMPLE',

@@ -13,7 +13,7 @@ interface NavBarProps {
 }
 
 export function NavBar({ navLinks, buttons }: NavBarProps) {
-  return <nav>
+  return <nav css={css`position: fixed; bottom: 0; width:100%; background: white;`}>
     <ul css={css`
           margin: 0;
           padding: 0;

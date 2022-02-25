@@ -1,28 +1,15 @@
 import styled from '@emotion/styled';
-import { axiosInstance } from '../services/axiosInstance';
-import useSWR from 'swr';
+import { PageProps } from '../types';
 
-
-const fetcher = (url) => axiosInstance.get<UserTimeLineHooksResponse>(url)
-
-export function UserTimelineHooks() {
-  const { data, error } = useSWR(
-    "/api/v1/user-timeline-hooks",
-    fetcher
-  );
-
-  if (error) return "An error has occurred.";
-  if (!data) return "Loading...";
-  const { data: { data: timelineState } } = data
-
+export function UserTimelineHooks({ userTimelineHooks }: PageProps) {
   return (
     <StyledPage>
-      {timelineState && timelineState.length ?
+      {userTimelineHooks && userTimelineHooks.length ?
         <div>
           <ul>
-            {timelineState.map((item, i) => <li key={i}>{JSON.stringify(item)}</li>)}
+            {userTimelineHooks.map((item, i) => <li key={i}>{JSON.stringify(item)}</li>)}
           </ul>
-        </div> : <div>User has no timeline state</div>}
+        </div> : <div>User has no timeline hooks</div>}
     </StyledPage>
   );
 }

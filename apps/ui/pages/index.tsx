@@ -4,10 +4,7 @@ import { useEffect, useState } from 'react';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import { contentfulClient } from '../services/contentful';
 import { css } from '@emotion/react';
-
-interface IndexProps {
-  currentEventHook: UserTimelineHookSerializer | null
-}
+import type { HookContentIntegrationSerializer, PageProps } from '../types';
 
 type ContentfulEntry = Entry<{
   title: string
@@ -20,7 +17,7 @@ interface ContentfulElementProps {
   fields: ContentfulEntry["fields"]
 }
 
-export function Index({ currentEventHook }: IndexProps) {
+export function Index({ currentTimelineHook }: PageProps) {
   const [contentfulContent, setContentfulContent] = useState<ContentfulEntry | null>(null)
   useEffect(() => {
     const fetchData = async ({ content_id }: HookContentIntegrationSerializer) => {
@@ -32,17 +29,25 @@ export function Index({ currentEventHook }: IndexProps) {
           .catch(err => console.log(err));
     }
 
-    if (currentEventHook && currentEventHook.content_integrations.some((ci) => ci.provider_id === 'contentful')) {
-      const contentfulItem = currentEventHook.content_integrations.find((ci) => ci.provider_id === 'contentful')
+    if (currentTimelineHook && currentTimelineHook.content_integrations.some((ci) => ci.provider_id === 'contentful')) {
+      const contentfulItem = currentTimelineHook.content_integrations.find((ci) => ci.provider_id === 'contentful')
       fetchData(contentfulItem)
     }
-  }, [currentEventHook])
+  }, [currentTimelineHook])
 
   return (
     <StyledPage>
+      <div css={css(`
+        height:100vh;
+        padding-top: 1.5em;
+        width: 100%;
+        background-color: black;
+        color: #fff;
+      `)}>
       {contentfulContent ?
         <ContentfulHandler contentfulContent={contentfulContent} />
         : null}
+      </div>
     </StyledPage>
   );
 }
