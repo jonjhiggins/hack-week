@@ -11,6 +11,8 @@ import { advanceUser } from '../data/advanceUser';
 import { css } from '@emotion/react';
 import { useUserInteractables } from '../data/useUserInteractables';
 import { useRouter } from 'next/router';
+import { UserInteractableSerializer, UserProfile, UserStoryState, UserTimelineHookSerializer } from '../types';
+import { route } from 'next/dist/server/router';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   const [userTimelineHooks, setUserTimelineHooks] = useState<UserTimelineHookSerializer[] | null>(null)
@@ -26,8 +28,12 @@ function CustomApp({ Component, pageProps }: AppProps) {
     try {
       const userStoryStateResponse = await advanceUser();
       if (userStoryStateResponse.data.meta.upserted_event_hooks.length) {
-        setCurrentTimelineHook(userStoryStateResponse.data.meta.upserted_event_hooks[0])
         setUserTimelineHooks(userStoryStateResponse.data.meta.upserted_event_hooks)
+        setCurrentTimelineHook(userStoryStateResponse.data.meta.upserted_event_hooks[0])
+      }
+      if (userStoryStateResponse.data.meta.upserted_interactables.length) {
+        setUserInteractables(userStoryStateResponse.data.meta.upserted_interactables)
+        setCurrentUserInteractable(userStoryStateResponse.data.meta.upserted_interactables[0])
       }
       setUserStoryState(userStoryStateResponse.data.data)
 
@@ -78,6 +84,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       setIsLoading(false)
       return
     }
+
     if (userInteractablesResponse && userInteractablesResponse.data.data) {
       const userInteractablesResponseData = userInteractablesResponse.data.data
       setUserInteractables(userInteractablesResponseData)
@@ -135,12 +142,18 @@ function CustomApp({ Component, pageProps }: AppProps) {
   }, [userStoryStateResponse, userStoryStateError])
 
   const router = useRouter()
-  const { debug } = router.query
-
+  const { debug, restart: shouldRestart } = router.query
+  if (shouldRestart && userProfile) {
+    router.replace('/')
+    restart()
+  }
   return (
     <>
       <Head>
         <title>DCI Hood</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin={true} />
+        <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet"></link>
       </Head>
       {debug ? <NavBar navLinks={[
         { name: 'Home', href: '/' },
@@ -153,7 +166,13 @@ function CustomApp({ Component, pageProps }: AppProps) {
         <button onClick={restart}>Restart</button>
         ]} /> : null}
 
-      <main className="app" css={css(`height: 100vh`)}>
+      <main className="app" css={css(`
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    `)}>
         {isError ? <div>Error: {isError}</div> : null}
         {!isLoading ? <Component
           {...pageProps}
@@ -162,7 +181,9 @@ function CustomApp({ Component, pageProps }: AppProps) {
           userTimelineHooks={userTimelineHooks}
           currentTimelineHook={currentTimelineHook}
           userInteractables={userInteractables}
-          currentUserInteractable={setCurrentUserInteractable}
+          currentUserInteractable={currentUserInteractable}
+          advance={advance}
+          restart={restart}
         /> : <div>Loading...</div>}
 
       </main>

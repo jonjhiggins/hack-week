@@ -7,6 +7,8 @@ interface PageProps extends NextPageContext {
   currentTimelineHook: UserTimelineHookSerializer
   userInteractables: UserInteractableSerializer[]
   currentUserInteractable: UserInteractableSerializer
+  advance: () => void
+  restart: () => void
 }
 
 interface FictioneersApiResponse<T, TT> {
