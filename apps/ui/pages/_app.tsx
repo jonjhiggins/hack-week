@@ -152,7 +152,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <Head>
         <title>DCI Hood</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin={true} />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
         <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet"></link>
       </Head>
       {debug ? <NavBar navLinks={[

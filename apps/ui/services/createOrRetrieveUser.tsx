@@ -1,5 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
+import { UserProfileResponse } from '../types';
 import { axiosInstance } from './axiosInstance';
 
 async function createUser() {
