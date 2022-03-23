@@ -75,5 +75,6 @@ export const getBearerToken = async () => {
     // Store the users uid in browser storage.
     set_user_id_in_browser_storage(uid);
   }
-  return BEARER_TOKEN.id_token;
+  // id_token soon to be deprecated
+  return BEARER_TOKEN.access_token || BEARER_TOKEN.id_token;
 };
