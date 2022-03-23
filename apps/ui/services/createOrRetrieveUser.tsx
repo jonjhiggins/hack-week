@@ -6,7 +6,7 @@ import { axiosInstance } from './axiosInstance';
 async function createUser() {
   const user = localStorage.getItem('user_uid');
   const uid = JSON.parse(user).uid;
-  await axiosInstance.post('/api/v1/users',
+  await axiosInstance.post('/users',
     {
       user_id: uid, published_timeline_id: process.env.NEXT_PUBLIC_FICTIONEERS_TIMELINE_ID,
       timezone: "Europe/London",
@@ -34,7 +34,7 @@ const userProfileFetcher = async (url) => {
 
 function createOrRetrieveUser() {
   return useSWR(
-    "/api/v1/users/me",
+    "/users/me",
     userProfileFetcher
   );
 }

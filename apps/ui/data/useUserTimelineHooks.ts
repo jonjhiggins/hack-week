@@ -3,7 +3,7 @@ import { getUserTimelineHooks } from "./fetchers/getUserTimelineHooks";
 
 function useUserTimelineHooks(shouldFetch: boolean) {
   const { data, error } = useSWR(shouldFetch ?
-    "/api/v1/user-timeline-hooks" : null,
+    "/user-timeline-hooks" : null,
     (url: string) => getUserTimelineHooks(url)
   );
 

@@ -22,7 +22,7 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto, authToken: string): Promise<string> {
-    const url = `/api/v1/users`
+    const url = `/users`
     const config: AxiosRequestConfig = {
       headers: { Authorization: `Bearer ${authToken}` }
     }

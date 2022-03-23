@@ -65,7 +65,7 @@ export const getBearerToken = async () => {
     const random_uid = uuidv4();
     const uid = cached_uuid || random_uid;
     // Post to get an anonymous token.
-    const result = await authAxiosInstance.post('/api/v1/auth/anonymous-token', {
+    const result = await authAxiosInstance.post('/auth/anonymous-token', {
       user_id: uid,
     });
 

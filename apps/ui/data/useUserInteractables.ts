@@ -3,7 +3,7 @@ import { getUserInteractables } from "./fetchers/getUserInteractables";
 
 function useUserInteractables(shouldFetch: boolean) {
   const { data, error } = useSWR(
-    shouldFetch ? "/api/v1/user-interactables" : null,
+    shouldFetch ? "/user-interactables" : null,
     (url: string) => getUserInteractables(url)
   );
 
